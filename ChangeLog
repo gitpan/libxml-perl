@@ -1,0 +1,123 @@
+1999-05-23  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* lib/Data/Grove/Tied.pm: renamed to Parent.pm
+
+	* README (DOCUMENTS): added
+	renamed libxml to libxml-perl
+
+	* libxml.spec: renamed libxml-perl.spec
+
+1999-05-17  Ken MacLeod  <kmacleod@serpentina.terrapinlabs.com>
+
+	* libxml.spec: files in `doc/' go into top-dir of /usr/doc/$PKG
+
+	* PerlSAX.pod: moved to doc/PerlSAX.pod
+
+1999-05-09  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* doc/modules.xml: added
+
+1999-05-08  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* doc/UsingPerlSAX.pod, examples/MyHandler.pm,
+	examples/myhandler.pl, examples/myhandler.xml: added
+
+1999-05-07  Ken MacLeod  <kmacleod@serpentina.terrapinlabs.com>
+
+	* lib/XML/ESISParser.pm, lib/Data/Grove.pm,
+	lib/XML/Handler/Sample.pm: added POD
+
+1999-05-06  Ken MacLeod  <kmacleod@serpentina.terrapinlabs.com>
+
+	* lib/Data/Grove/Visitor.pm: remove XML::Grove extensions and make
+	generic
+
+	* lib/XML/Parser/SAXPerl.pm: renamed PerlSAX.pm
+
+	* lib/XML/Handler/Sample.pm: added
+
+	* examples/perlsax-test.pl: added
+
+	* examples/esis-test.pl: updated for new XML::ESISParser, moved
+	handler (Receiver) to XML::Handler::Sample, added command line
+	option for SGML
+
+1999-04-30  Ken MacLeod  <kmacleod@serpentina.terrapinlabs.com>
+
+	* Makefile.PL: added PREREQ_PM for XML::Parser
+
+1999-04-15  Ken MacLeod  <kmacleod@serpentina.terrapinlabs.com>
+
+	* lib/Data/Grove/Visitor.pm (accept): change XML:: to Data::
+
+	* lib/Data/Grove.pm (new): %{ shift } was being read as %shift
+
+1999-02-18  Ken MacLeod  <kmacleod@outlaw.cycletime.com>
+
+	* lib/Data/Grove/Visitor.pm: was XML::Grove::Visitor
+
+	* lib/Data/Grove/Tied.pm: was XML::Grove::Node
+
+	* lib/Data/Grove.pm: created from XML::Grove
+
+1999-02-15  Ken MacLeod  <kmacleod@outlaw.cycletime.com>
+
+	* lib/XML/Parser/SAXPerl.pm (parse): add comments
+
+	* lib/XML/ESISParser.pm: major changes for support of both XML and
+	SGML, and ongoing Perl SAX updates
+
+	* SAX.pod (end_document): noted that the return value of
+	end_document() is the return value of parse()
+
+	* README: added reference to FAQ, added module statuses, more
+	cleary described ESISParser, require Perl 5.005
+
+1999-02-13  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* lib/XML/ESISParser.pm: start move to Perl SAX
+
+1999-02-12  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* lib/XML/SAX2Perl.pm, lib/XML/Perl2SAX.pm, lib/XML/ESISParser.pm:
+	update to new Perl SAX
+
+	* lib/XML/Parser/SAXPerl.pm (new): allow hash or key/value pairs
+
+1999-02-12  Ken MacLeod  <kmacleod@outlaw.cycletime.com>
+
+	* interface-style.pod: note still undecided items
+
+	* lib/XML/Parser/SAXPerl.pm: fixes shown by xp_sax.t
+
+	* t/xp_sax.t: added
+
+	* lib/XML/Parser/SAXPerl.pm: added pod
+	many changes for Perl SAX and XML::Parser::Expat
+
+1999-02-11  Ken MacLeod  <kmacleod@outlaw.cycletime.com>
+
+	* SAX.pod: suggestions from Eric Prud'hommeaux and Enno Derksen
+
+	* interface-style.pod: suggestions from Larry Wall
+
+1999-02-01  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* MANIFEST: updated
+
+	* lib/XML/Parser/SAXPerl.pm: modified more towards Perl SAX
+
+	* SAX.pod: added
+
+1999-01-31  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* interface-style.pod: added
+
+1998-12-10  Ken MacLeod  <kmacleod@chelonia.bigplanet.com>
+
+	* lib/XML/Parser/SAXPerl.pm: added
+
+1998-12-08  Ken MacLeod  <kmacleod@chelonia.bigplanet.com>
+
+	* MANIFEST: added
+

@@ -1,0 +1,13 @@
+Revision history for Perl extension libxml
+
+Backwards incompatible changes are marked with a `*'.
+
+0.02
+	- renamed package from `libxml' to `libxml-perl'
+	- added doc/modules.xml
+	- added doc/UsingPerlSAX.pod and example files
+	- moved PerlSAX.pod and interface-style.pod to `doc/'
+	- renamed Data::Grove::Tied to Data::Grove::Parent
+
+0.01  Fri May  7 14:59:07 CDT 1999
+	- original version
