@@ -2,7 +2,31 @@ Revision history for Perl extension libxml
 
 Backwards incompatible changes are marked with a `*'.
 
-0.04
+0.05  Mon Aug 16 11:02:32 CDT 1999
+	- Major update to PerlSAX.pod
+          - added an introduction
+          - added a ``Deviations from the Java version'' section
+	  * re-added the `set_document_locator()' handler method
+	  - added arguments to method synopses
+	  - attributed most of the content to the SAX 1.0 JavaDoc
+	  - minor typos
+	- XML::Handler::XMLWriter: a new PerlSAX handler for writing
+	  readable XML (in contrast to Canonical XML)
+	- XML::Handler::Subs: a new PerlSAX handler base class for
+	  calling user-defined subs
+	- XML::Handler::Sample: this is a template for creating
+	  PerlSAX handlers, it is now in the Public Domain
+	- XML::PatAct::ToObjects: add CopyAttributes option, add
+	  -grove-contents option
+	- all PatAct modules can now take parameters as either a list
+	  of key, value pairs or a hash
+	- fixes
+	  - XML::ESISParser wasn't testing handlers for what methods
+	    they support
+	  - XML::Parser::PerlSAX wasn't capturing XML::Parser Element
+	    events
+
+0.04  Wed Aug 11 10:03:00 CDT 1999
 	- README: updated with PatAct modules
 	- added Creating PatAct Modules and Using PatAct Modules docs
 	- added XML::PatAct::ActionTempl, XML::PatAct::Amsterdam,

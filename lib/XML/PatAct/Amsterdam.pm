@@ -3,7 +3,7 @@
 # XML::PatAct::Amsterdam is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: Amsterdam.pm,v 1.1 1999/08/10 21:42:39 kmacleod Exp $
+# $Id: Amsterdam.pm,v 1.2 1999/08/16 16:04:03 kmacleod Exp $
 #
 
 use strict;
@@ -13,7 +13,8 @@ use UNIVERSAL;
 package XML::PatAct::Amsterdam;
 
 sub new {
-    my $type = shift; my $self = { @_ };
+    my $type = shift;
+    my $self = ($#_ == 0) ? { %{ (shift) } } : { @_ };
 
     bless $self, $type;
 
@@ -147,6 +148,7 @@ it's limitations quickly with even moderately complex XML instances,
 be aware of and prepared to switch to more complete style modules.
 
 New XML::PatAct::Amsterdam instances are creating by calling `new()'.
+Parameters can be passed as a list of key, value pairs or a hash.
 A Patterns and Matcher options are required.  Patterns is the
 pattern-action list to apply.  Matcher is an instance of the pattern
 or query matching module.  The File option is an open io handle (see

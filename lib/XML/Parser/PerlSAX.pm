@@ -3,7 +3,7 @@
 # XML::Parser::PerlSAX is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: PerlSAX.pm,v 1.3 1999/08/10 18:46:13 kmacleod Exp $
+# $Id: PerlSAX.pm,v 1.5 1999/08/16 16:04:03 kmacleod Exp $
 #
 
 use strict;
@@ -90,7 +90,7 @@ sub parse {
 	    if (UNIVERSAL::can($dtd_h, 'unparsed_entity_decl'));
 	push (@handlers, Entity => sub { $self->_handle_entity(@_) } )
 	    if (UNIVERSAL::can($dtd_h, 'entity_decl'));
-	push (@handlers, Entity => sub { $self->_handle_element(@_) } )
+	push (@handlers, Element => sub { $self->_handle_element(@_) } )
 	    if (UNIVERSAL::can($dtd_h, 'element_decl'));
 	push (@handlers, Attlist => sub { $self->_handle_attlist(@_) } )
 	    if (UNIVERSAL::can($dtd_h, 'attlist_decl'));
@@ -167,6 +167,9 @@ sub _handle_init {
 
     $self->{Expat} = $expat;
 
+    if ($self->{DocumentHandler}->can('set_document_locator')) {
+	$self->{DocumentHandler}->set_document_locator( { Locator => $self } );
+    }
     $self->{DocumentHandler}->start_document( { } );
 }
 

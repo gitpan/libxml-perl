@@ -4,7 +4,7 @@ MANIFEST
 Makefile.PL
 README
 libxml-perl.spec
-libxml-perl-0.04.spec
+libxml-perl-0.05.spec
 doc/CreatingPatActModules.pod
 doc/PerlSAX.pod
 doc/UsingPatActModules.pod
@@ -19,6 +19,8 @@ lib/XML/Perl2SAX.pm
 lib/XML/SAX2Perl.pm
 lib/XML/Handler/CanonXMLWriter.pm
 lib/XML/Handler/Sample.pm
+lib/XML/Handler/Subs.pm
+lib/XML/Handler/XMLWriter.pm
 lib/XML/Parser/PerlSAX.pm
 lib/XML/PatAct/ActionTempl.pm
 lib/XML/PatAct/Amsterdam.pm
@@ -34,4 +36,6 @@ examples/schema.pl
 examples/schema.xml
 t/canon_xml_writer.t
 t/schema.t
+t/stream.t
+t/subs.t
 t/xp_sax.t

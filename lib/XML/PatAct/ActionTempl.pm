@@ -1,7 +1,7 @@
 # This template file is in the Public Domain.
 # You may do anything you want with this file.
 #
-# $Id: ActionTempl.pm,v 1.1 1999/08/10 21:42:39 kmacleod Exp $
+# $Id: ActionTempl.pm,v 1.2 1999/08/16 16:04:03 kmacleod Exp $
 #
 
 # replace all occurrences of ACTION with the name of your module!
@@ -13,7 +13,8 @@ use UNIVERSAL;
 package XML::PatAct::ACTION;
 
 sub new {
-    my $type = shift; my $self = { @_ };
+    my $type = shift;
+    my $self = ($#_ == 0) ? { %{ (shift) } } : { @_ };
 
     bless $self, $type;
 
@@ -125,6 +126,7 @@ XML::PatAct::ACTION is a PerlSAX handler for applying pattern-action
 lists to XML parses or trees.  XML::PatAct::ACTION ...
 
 New XML::PatAct::ACTION instances are creating by calling `new()'.  A
+Parameters can be passed as a list of key, value pairs or a hash.
 Patterns and Matcher options are required.  Patterns is the
 pattern-action list to apply.  Matcher is an instance of the pattern
 or query matching module.

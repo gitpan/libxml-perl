@@ -1,11 +1,66 @@
-=head1 Parser Interfaces
+=head1 SAX for Perl
 
-Basic interface for a simplified Perl binding for SAX (Simple API for XML).
+=head2 What is SAX?
+
+SAX (Simple API for XML) is a common parser interface for XML
+parsers.  It allows application writers to write applications that use
+XML parsers, but are independent of which parser is actually used.
+
+This document describes a version of SAX used by Perl modules.  The
+original version of SAX, for Java, is described at
+<http://www.megginson.com/SAX/>.
+
+There are two basic interfaces in the Perl version of SAX, the parser
+interface and the handler interface.  The parser interface creates new
+parser instances, initiates parsing, and provides additional
+information to handlers on request.  The handler interface is used to
+receive parse events from the parser.
+
+=head2 Deviations from the Java version
+
+=over 4
+
+=item *
+
+Takes parameters to `C<new()>' instead of using `set*' calls.
+
+=item *
+
+Allows a default Handler parameter to be used for all handlers.
+
+=item *
+
+No base classes are implemented.  Instead, parsers dynamically check
+the handlers for what methods they support.
+
+=item *
+
+The AttributeList, InputSource, and SAXException classes have been
+replaced by anonymous hashes.
+
+=item *
+
+Handlers are passed a hash containing properties as an argument in
+place of positional arguments.
+
+=item *
+
+`C<parse()>' returns the value returned by calling the
+`C<end_document()>' handler.
+
+=item *
+
+Method names have been converted to lower-case with underscores.
+Parameters are all mixed case with initial upper-case.
+
+=back
+
+=head1 Parser Interface
 
 SAX parsers are reusable but not re-entrant: the application may reuse
 a parser object (possibly with a different input source) once the
 first parse has completed successfully, but it may not invoke the
-parse() methods recursively within a parse.
+`C<parse()>' methods recursively within a parse.
 
 Parser objects contain the following options.  A new or different
 handler option may provided in the middle of a parse, and the SAX
@@ -31,26 +86,27 @@ All handler methods are called with a single hash argument containing
 the parameters for that method.  `C<new()>' methods can be called with
 a hash or a list of key-value pairs containing the parameters.
 
-=head2 Parser
-
 All SAX parsers must implement this basic interface: it allows
 applications to provide handlers for different types of events and to
 initiate a parse from a URI, a byte stream, or a character stream.
 
 =over 4
 
-=item new
+=item new( I<OPTIONS> )
 
 Creates a Parser that will be used to parse XML sources.  Any
 parameters passed to `C<new()>' will be used for subsequent parses.
+I<OPTIONS> may be a list of key, value pairs or a hash.
 
-=item parse
+=item parse( I<OPTIONS> )
 
 Parse an XML document. 
 
 The application can use this method to instruct the SAX parser to
 begin parsing an XML document from any valid input source (a character
-stream, a byte stream, or a URI).
+stream, a byte stream, or a URI).  I<OPTIONS> may be a list of key,
+value pairs or a hash.  I<OPTIONS> passed to `C<parse()>' override
+options given when the parser instance was created with `C<new()>'.
 
 Applications may not invoke this method while a parse is in progress
 (they should create a new Parser instead for each additional XML
@@ -60,11 +116,9 @@ Parser object, possibly with a different input source.
 `C<parse()>' returns the result of calling the handler method
 `C<end_document()>'.
 
-The hash passed to `C<parse()>' must contain at least one parameter,
-`C<Source>', that provides the input source for parsing.  Additional
-parameters replace the existing options set in the parser object.
-`C<Source>' may be a scalar containing XML text or a hash with the
-following keys:
+A `C<Source>' parameter must have been provided to either the
+`C<parse()>' or `C<new()>' methods.  The `C<Source>' parameter is a
+hash containing the following parameters:
 
 =over 4
 
@@ -142,9 +196,8 @@ stream.
 Interface for associating a SAX event with a document location. 
 
 If a SAX parser provides location information to the SAX application,
-it does so by implementing this interface and then passing an instance
-to the application passing the `C<Locator>' parameter to the document
-handler's `C<start_document()>' method. The application can use the
+it does so by implementing the following methods and then calling the
+`C<set_document_locator()' handler method.  The handler can use the
 object to obtain the location of any other document handler event in
 the XML source document.
 
@@ -158,7 +211,7 @@ strongly encouraged to do so.
 
 =over 4
 
-=item location
+=item location()
 
 Return the location information for the current event.
 
@@ -207,32 +260,48 @@ elements and character data.
 The order of events in this interface is very important, and mirrors
 the order of information in the document itself.  For example, all of
 an element's content (character data, processing instructions, and/or
-subelements) will appear, in order, between the startElement event and
-the corresponding endElement event.
+subelements) will appear, in order, between the `C<start_element()>'
+event and the corresponding `C<end_element()>' event.
 
 The application can find the location of any event using the Locator
-interface supplied by the Parser through the `C<Locator>' parameter to
-`C<start_document()>'.
+interface supplied by the Parser through the
+`C<set_document_locator()>' method.
 
 =over 4
 
-=item start_document
+=item set_document_locator( { Locator => $locator } )
 
-Receive notification of the beginning of a document.
+Receive an object for locating the origin of SAX document events.
 
-The SAX parser will invoke this method only once, before any other
-methods in this interface or in DTDHandler.
+SAX parsers are strongly encouraged (though not absolutely required)
+to supply a locator: if it does so, it must supply the locator to the
+application by invoking this method before invoking any of the other
+methods in the DocumentHandler interface.
 
-`C<Locator>' parameter, if provided, contains an object that can be
-queried for the current location within the document.  Parsers are not
-required to provide a document locator.
+The locator allows the application to determine the end position of
+any document-related event, even if the parser is not reporting an
+error. Typically, the application will use this information for
+reporting its own errors (such as character content that does not
+match an application's business rules). The information returned by
+the locator is probably not sufficient for use with a search engine.
+
+Note that the locator will return correct information only during the
+invocation of the events in this interface. The application should not
+attempt to use it at any other time.
 
 Parameters:
 
   Locator     An object that can return the location of any SAX document
               event.
 
-=item end_document
+=item start_document( { } )
+
+Receive notification of the beginning of a document.
+
+The SAX parser will invoke this method only once, before any other
+methods in this interface or in DTDHandler.
+
+=item end_document( { } )
 
 Receive notification of the end of a document, no parameters are
 passed for the end of a document.
@@ -245,7 +314,7 @@ unrecoverable error) or reached the end of input.
 The value returned by calling `C<end_document()>' will be the value
 returned by `C<parse()>'.
 
-=item start_element
+=item start_element( { Name => $name, Attributes => $attributes } )
 
 Receive notification of the beginning of an element.
 
@@ -265,7 +334,7 @@ Parameters:
   Name        The element type name.
   Attributes  The attributes attached to the element, if any.
 
-=item end_element
+=item end_element( { Name => $name } )
 
 Receive notification of the end of an element.
 
@@ -281,7 +350,7 @@ Parameters:
 
   Name        The element type name.
 
-=item characters
+=item characters( { Data => $characters } )
 
 Receive notification of character data.
 
@@ -299,7 +368,7 @@ Parameters:
 
   Data        The characters from the XML document.
 
-=item ignorable_whitespace
+=item ignorable_whitespace( { Data => $whitespace } )
 
 Receive notification of ignorable whitespace in element content. 
 
@@ -318,7 +387,7 @@ specified range.
 
   Data        The characters from the XML document.
 
-=item processing_instruction
+=item processing_instruction ( { Target => $target, Data => $data } )
 
 Receive notification of a processing instruction. 
 
@@ -352,7 +421,7 @@ no requirement that the parser continue to provide useful information
 after a call to `C<fatal_error()>' (in other words, a SAX driver class
 could catch an exception and report a fatalError).
 
-All error handlers receive the following parameters.  The
+All error handlers receive the following I<PARAMS>.  The
 `C<PublicId>', `C<SystemId>', `C<LineNumber>', and `C<ColumnNumber>'
 are provided only if the parser has that information available.
 
@@ -376,7 +445,7 @@ after the call to `C<fatal_error()>'.
 
 =over 4
 
-=item warning
+=item warning( { I<PARAMS> } )
 
 Receive notification of a warning. 
 
@@ -388,7 +457,7 @@ The SAX parser must continue to provide normal parsing events after
 invoking this method: it should still be possible for the application
 to process the document through to the end.
 
-=item error
+=item error( { I<PARAMS> } )
 
 Receive notification of a recoverable error. 
 
@@ -403,7 +472,7 @@ to process the document through to the end. If the application cannot
 do so, then the parser should report a fatal error even if the XML 1.0
 recommendation does not require it to do so.
 
-=item fatal_error
+=item fatal_error( { I<PARAMS> } )
 
 Receive notification of a non-recoverable error. 
 
@@ -448,7 +517,7 @@ undefined will be ignored.
 
 =over 4
 
-=item notation_decl
+=item notation_decl( { I<PARAMS> } )
 
 Receive notification of a notation declaration event.
 
@@ -458,12 +527,13 @@ reference, if necessary.
 If a system identifier is present, and it is a URL, the SAX parser
 must resolve it fully before passing it to the application.
 
-Parameters:
+I<PARAMS>:
+
   Name        The notation name.
   PublicId    The notation's public identifier, or undef if none was given.
   SystemId    The notation's system identifier, or undef if none was given.
 
-=item unparsed_entity_decl
+=item unparsed_entity_decl( { I<PARAMS> } )
 
 Receive notification of an unparsed entity declaration event.
 
@@ -474,7 +544,7 @@ entity for later reference, if necessary.
 If the system identifier is a URL, the parser must resolve it fully
 before passing it to the application.
 
-Parameters:
+I<PARAMS>:
 
   Name        The unparsed entity's name.
   PublicId    The entity's public identifier, or undef if none was given.
@@ -501,15 +571,13 @@ it will be especially useful for applications that build XML documents
 from databases or other specialised input sources, or for applications
 that use URI types other than URLs.
 
-[Demo method ommitted for now]
-
 The application can also use this interface to redirect system
 identifiers to local URIs or to look up replacements in a catalog
 (possibly by using the public identifier).
 
 =over 4
 
-=item resolve_entity
+=item resolve_entity( { PublicId => $public_id, SystemId => $system_id } )
 
 Allow the application to resolve external entities.
 
@@ -560,7 +628,12 @@ parameters interact.
 SAX <http://www.megginson.com/SAX/> was developed collaboratively by
 the members of the XML-DEV mailing list.  Please see the ``SAX History
 and Contributors'' page for the people who did the real work behind
-SAX.
+SAX.  Much of the content of this document was copied from the SAX 1.0
+Java Implementation documentation.
+
+The SAX for Python specification was helpful in creating this
+specification.
+<http://www.stud.ifi.uio.no/~larsga/download/python/xml/saxlib.html>
 
 Thanks to the following people who contributed to Perl SAX.
 

@@ -1,9 +1,7 @@
+# This template file is in the Public Domain.
+# You may do anything you want with this file.
 #
-# Copyright (C) 1999 Ken MacLeod
-# XML::Handler::Sample is free software; you can redistribute it and/or
-# modify it under the same terms as Perl itself.
-#
-# $Id: Sample.pm,v 1.3 1999/05/07 20:07:00 kmacleod Exp $
+# $Id: Sample.pm,v 1.4 1999/08/16 16:04:03 kmacleod Exp $
 #
 
 package XML::Handler::Sample;
@@ -67,7 +65,7 @@ __END__
 
 =head1 NAME
 
-XML::Handler::Sample - a trivial Perl SAX handler
+XML::Handler::Sample - a trivial PerlSAX handler
 
 =head1 SYNOPSIS
 
@@ -81,13 +79,16 @@ XML::Handler::Sample - a trivial Perl SAX handler
 
 =head1 DESCRIPTION
 
-C<XML::Handler::Sample> is a trivial Perl SAX handler that prints out
+C<XML::Handler::Sample> is a trivial PerlSAX handler that prints out
 the name of each event it receives.  The source for
 C<XML::Handler::Sample> lists all the currently known PerlSAX
-handlers.
+handler methods.
 
 C<XML::Handler::Sample> is intended for Perl module authors who wish
-to look at example PerlSAX handler modules.
+to look at example PerlSAX handler modules.  C<XML::Handler::Sample>
+can be used as a template for writing your own PerlSAX handler
+modules.  C<XML::Handler::Sample> is in the Public Domain and can be
+used for any purpose without restriction.
 
 =head1 AUTHOR
 

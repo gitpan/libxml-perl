@@ -1,7 +1,7 @@
 # This template file is in the Public Domain.
 # You may do anything you want with this file.
 #
-# $Id: PatternTempl.pm,v 1.1 1999/08/10 21:42:39 kmacleod Exp $
+# $Id: PatternTempl.pm,v 1.2 1999/08/16 16:04:03 kmacleod Exp $
 #
 
 # replace all occurrences of PATTERN with the name of your module!
@@ -11,7 +11,8 @@ use strict;
 package XML::PatAct::PATTERN;
 
 sub new {
-    my $type = shift; my $self = { @_ };
+    my $type = shift;
+    my $self = ($#_ == 0) ? { %{ (shift) } } : { @_ };
 
     # perform any one-time initializations
 
@@ -63,6 +64,8 @@ XML::PatAct::PATTERN - A pattern module for
 XML::PatAct::PATTERN is a pattern module for use with PatAct action
 modules for applying pattern-action lists to XML parses or trees.
 XML::PatAct::PATTERN ...
+
+Parameters can be passed as a list of key, value pairs or a hash.
 
 DESCRIBE THE FORMAT OR LANGUAGE OF YOUR PATTERNS HERE
 

@@ -3,7 +3,7 @@
 # XML::PatAct::ToObjects is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: ToObjects.pm,v 1.1 1999/08/10 21:42:39 kmacleod Exp $
+# $Id: ToObjects.pm,v 1.3 1999/08/16 16:04:03 kmacleod Exp $
 #
 
 # The original XML::Grove::ToObjects actually generated and compiled a
@@ -18,12 +18,13 @@ use UNIVERSAL;
 package XML::PatAct::ToObjects;
 use vars qw{$name_re};
 
-# FIXME I'm doubt this is a correct Perl RE for productions [4] and
+# FIXME I doubt this is a correct Perl RE for productions [4] and
 # [5] in the XML 1.0 specification, especially considering Unicode chars
 $name_re = '[A-Za-z_:][A-Za-z0-9._:-]*';
 
 sub new {
-    my $type = shift; my $self = { @_ };
+    my $type = shift;
+    my $self = ($#_ == 0) ? { %{ (shift) } } : { @_ };
 
     bless $self, $type;
 
@@ -149,8 +150,17 @@ sub start_element {
 
     if (defined $action->{Make}) {
 	my @args;
+	if (defined $element->{Attributes}) {
+	    if (defined $self->{CopyAttributes}) {
+		push @args, %{$element->{Attributes}};
+	    } elsif ($self->{CopyId} && defined($element->{Attributes}{ID})) {
+		# FIXME use code from XML::Grove::IDs
+		push (@args, ID => $element->{Attributes}{ID});
+	    }
+	}
+
 	if (defined $action->{Args}) {
-	    eval '@args = (' . $action->{Args} . ')';
+	    eval 'push (@args, (' . $action->{Args} . '))';
 	    if ($@) {
 		warn "$@\nwhile processing pattern/action #$index\n";
 	    }
@@ -169,11 +179,12 @@ sub start_element {
 	    }
 	}
 
-	if ($self->{CopyId}) {
-	    # FIXME using code from XML::Grove::IDs
-	    # FIXME assumes $value is a hash
-	    $self->{Parents}[-1]->{ID} = $element->{Attributes}{ID};
-	}
+	if ($action->{ContentsAsGrove}) {
+	    $self->{States}[-1] = 'as-grove';
+	    if (!$self->{SourceIsGrove}) {
+		$self->{GroveBuilder}->start_document( { } );
+	    }
+	} 
     }
 
     # all other actions occur at end_element()
@@ -216,6 +227,14 @@ sub end_element {
 	$value =~ s/%\{($name_re)\}/$element->{Attributes}{$1}/ge;
     } elsif (defined $action->{Make}) {
 	$value = pop @{$self->{Parents}};
+	if ($action->{ContentsAsGrove}) {
+	    if ($self->{SourceIsGrove}) {
+		$value->{Contents} = $element->{Contents};
+	    } else {
+		$value->{Contents} =
+		    $self->{GroveBuilder}->end_document({ })->{Contents};
+	    }
+	}
     }
 
     if ($action->{FieldIsArray}) {
@@ -275,6 +294,9 @@ sub _parse_action {
 	} elsif ($option eq '-grove') {
 	    $self->{GroveBuilder} = 1;
 	    $action->{AsGrove} = 1;
+	} elsif ($option eq '-grove-contents') {
+	    $self->{GroveBuilder} = 1;
+	    $action->{ContentsAsGrove} = 1;
 	} elsif ($option eq '-ignore') {
 	    $action->{Ignore} = 1;
 	} elsif ($option eq '-pcdata') {
@@ -303,9 +325,10 @@ XML::PatAct::ToObjects - An action module for creating Perl objects
 		  PATTERN => "PERL-CODE",
 		  ... ];
 
- my $matcher = XML::PatAct::ToObjects->new(Patterns => $patterns,
-					   Matcher => $matcher,
-					   CopyId => 1 );
+ my $matcher = XML::PatAct::ToObjects->new( Patterns => $patterns,
+					    Matcher => $matcher,
+					    CopyId => 1,
+					    CopyAttributes => 1 );
 
 
 =head1 DESCRIPTION
@@ -316,13 +339,33 @@ creates Perl objects of the types and contents of the action items you
 define.
 
 New XML::PatAct::ToObject instances are creating by calling `new()'.
-A Patterns and Matcher options are required, and CopyId is optional.
-Patterns is the pattern-action list to apply.  Matcher is an instance
-of the pattern or query matching module.  CopyId causes the `ID'
-attribute, if any, in a source XML element to be copied to an `ID'
-attribute in newly created objects.  Note that IDs may be lost of no
-pattern matches that element or an object is not created (C<-make>)
-for that element.
+Parameters can be passed as a list of key, value pairs or a hash.
+`new()' requires the Patterns and Matcher parameters, the rest are
+optional:
+
+=over 4
+
+=item Patterns
+
+The pattern-action list to apply.
+
+=item Matcher
+
+An instance of the pattern or query matching module.
+
+=item CopyId
+
+Causes the `ID' attribute, if any, in a source XML element to be
+copied to an `ID' attribute in newly created objects.  Note that IDs
+may be lost of no pattern matches that element or an object is not
+created (C<-make>) for that element.
+
+=item CopyAttributes
+
+Causes all attributes of the element to be copied to the newly created
+objects.
+
+=back
 
 Each action can either be a list of options defined below or a string
 containing a fragment of Perl code.  If the action is a string of Perl
@@ -393,6 +436,11 @@ Copy this element to I<FIELD> without further processing.  The element
 can then be processed later as the Perl objects are manipulated.  Only
 valid with B<-field> or B<-push-field>.  If ToObjects is used with
 PerlSAX, this will use XML::Grove::Builder to build the grove element.
+
+=item B<-grove-contents>
+
+Used with B<-make>, B<-grove-contents> creates an object but then
+takes all of the content of that element and stores it in Contents.
 
 =back
 
@@ -480,6 +528,27 @@ one of it's objects, so it requires the XML::Grove module.
 
     my $parser = XML::Parser::PerlSAX->new( Handler => $handler );
     my $schema = $parser->parse(Source => { SystemId => $ARGV[0] } );
+
+=head1 TODO
+
+=over 4
+
+=item *
+
+It'd be nice if patterns could be applied even in B<-as-string> and
+B<-grove>.
+
+=item *
+
+Implement Perl code actions.
+
+=item *
+
+B<-as-xml> to write XML into the field.
+
+=back
+
+
 
 =head1 AUTHOR
 

@@ -1,3 +1,40 @@
+1999-08-16  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* lib/XML/Parser/PerlSAX.pm (_handle_init): call set_document_locator
+
+	* lib/XML/PatAct/ActionTempl.pm, lib/XML/PatAct/Amsterdam.pm,
+	lib/XML/PatAct/MatchName.pm, lib/XML/PatAct/PatternTempl.pm (new):
+	Accept both key, value pairs and hash options
+
+	* lib/XML/PatAct/ToObjects.pm (new): 
+
+	* lib/XML/Handler/Subs.pm: added
+
+	* t/subs.t: added
+
+	* t/stream.t: added
+
+1999-08-15  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* lib/XML/Handler/XMLWriter.pm: added
+
+	* lib/XML/Handler/Sample.pm: Placed in public domain
+
+1999-08-14  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* doc/PerlSAX.pod: added an introduction, a ``Deviations from the Java version'' section, added `set_document_locator()' handler method
+
+	* lib/XML/PatAct/ToObjects.pm: add CopyAttributes option, add
+	-grove-contents action
+
+1999-08-12  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* lib/XML/ESISParser.pm (parse_fh): dynamically test event handler
+	existance
+
+	* lib/XML/Parser/PerlSAX.pm (parse): wasn't capturing XML::Parser
+	Element events
+
 1999-08-10  Ken MacLeod  <ken@bitsko.slc.ut.us>
 
 	* README, doc/modules.xml: updated with PatAct modules

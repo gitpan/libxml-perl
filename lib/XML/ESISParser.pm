@@ -2,12 +2,13 @@
 # Copyright (C) 1999 Ken MacLeod
 # See the file COPYING for distribution terms.
 #
-# $Id: ESISParser.pm,v 1.5 1999/08/10 18:46:13 kmacleod Exp $
+# $Id: ESISParser.pm,v 1.6 1999/08/14 15:57:45 kmacleod Exp $
 #
 
 use strict;
 
 use IO::File;
+use UNIVERSAL;
 
 package XML::ESISParser;
 
@@ -179,8 +180,15 @@ sub parse_fh {
     my $dtd_h = $self->{ParseOptions}{DTDHandler};
     my $err_h = $self->{ParseOptions}{ErrorHandler};
 
+    # we cache these most commonly used `can()' calls
+    my $can_start_element = $doc_h->can('start_element');
+    my $can_end_element = $doc_h->can('end_element');
+    my $can_characters = $doc_h->can('characters');
+    my $can_record_end = $doc_h->can('record_end');
+
     my $line = 0;
-    $doc_h->start_document( { } );
+    $doc_h->start_document( { } )
+	if ($doc_h->can('start_document'));
 
     # 30% speed improvement by breaking the encapsulation
     my ($is_filehandle) = (ref ($file) eq "FileHandle"
@@ -205,14 +213,16 @@ sub parse_fh {
 	    if ($#attributes >= 0) {
 		push (@properties, Attributes => { @attributes });
 	    }
-	    $doc_h->start_element ({ Name => $', @properties });
+	    $doc_h->start_element ({ Name => $', @properties })
+		if ($can_start_element);
 
 	    @properties = (); @attributes = ();
 	    next;
 	}
 
 	if (/^\)/) {		# end element
-	    $doc_h->end_element ({ Name => $' });
+	    $doc_h->end_element ({ Name => $' })
+		if ($can_end_element);
 
 	    next;
 	}
@@ -237,9 +247,11 @@ sub parse_fh {
 		    # beginning or end of SDATA
 		    if ("$out" ne '') {
 			if ($sdata_flag) {
-			    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} });
+			    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} })
+				if ($doc_h->can('internal_entity_ref'));
 			} else {
-			    $doc_h->characters({ Data => $out });
+			    $doc_h->characters({ Data => $out })
+				if ($can_characters);
 			}
 			$out = '';
 		    }
@@ -249,13 +261,16 @@ sub parse_fh {
 		    # record end
 		    if ("$out" ne '') {
 			if ($sdata_flag) {
-			    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} });
+			    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} })
+				if ($doc_h->can('internal_entity_ref'));
 			} else {
-			    $doc_h->characters({ Data => $out });
+			    $doc_h->characters({ Data => $out })
+				if ($can_characters);
 			}
 			$out = '';
 		    }
-		    $doc_h->record_end;
+		    $doc_h->record_end
+			if ($can_record_end);
 		} elsif ($1 eq '\\') {
 		    $out .= '\\';
 		} else {
@@ -265,9 +280,11 @@ sub parse_fh {
 	    $out .= $data;
 	    if ("$out" ne '') {
 		if ($sdata_flag) {
-		    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} });
+		    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} })
+			if ($doc_h->can('internal_entity_ref'));
 		} else {
-		    $doc_h->characters({ Data => $out });
+		    $doc_h->characters({ Data => $out })
+			if ($can_characters);
 		}
 	    }
 
@@ -307,7 +324,8 @@ sub parse_fh {
 		push (@properties, GeneratedId => $files);
 	    }
 	    $dtd_h->external_entity_decl ({ Name => $name, Type => $type,
-					    Notation => $notation, @properties });
+					    Notation => $notation, @properties })
+		if ($dtd_h->can('external_entity_decl'));
 
 	    @properties = (); undef $files;
 	    next;
@@ -317,14 +335,16 @@ sub parse_fh {
 	    my ($name, $type, $value) = split (/\s/, $', 3);
 	    $self->{'internal_entities_by_value'}{$value} = $name;
 	    $dtd_h->internal_entity_decl ({ Name => $name, Type => $type,
-					    Value => $value });
+					    Value => $value })
+		if ($dtd_h->can('internal_entity_decl'));
 
 	    next;
 	}
 
 	if (/^&/) {		# external entity reference
 	    my ($name) = $';
-	    $doc_h->external_entity_ref({ Name => $name });
+	    $doc_h->external_entity_ref({ Name => $name })
+		if ($doc_h->can('external_entity_ref'));
 
 	    next;
 	}
@@ -332,10 +352,12 @@ sub parse_fh {
 	if (/^\?/) {		# processing instruction (PI)
 	    my ($data) = $';
 	    if ($self->{ParseOptions}{IsSGML}) {
-		$doc_h->processing_instruction({ Data => $data });
+		$doc_h->processing_instruction({ Data => $data })
+		    if ($doc_h->can('processing_instruction'));
 	    } else {
 		my ($target, $pi_data) = split (/\s+/, $data, 2);
-		$doc_h->processing_instruction({ Target => $target, Data => $pi_data });
+		$doc_h->processing_instruction({ Target => $target, Data => $pi_data })
+		    if ($doc_h->can('processing_instruction'));
 	    }
 
 	    next;
@@ -346,7 +368,8 @@ sub parse_fh {
 	    if (defined $files) {
 		push (@properties, GeneratedId => $files);
 	    }
-	    $dtd_h->notation_decl ({ Name => $name, @properties });
+	    $dtd_h->notation_decl ({ Name => $name, @properties })
+		if ($dtd_h->can('notation_decl'));
 
 	    @properties = (); undef $files;
 	    next;
@@ -357,7 +380,8 @@ sub parse_fh {
 	    if (defined $files) {
 		push (@properties, GeneratedId => $files);
 	    }
-	    $dtd_h->subdoc_entity_decl ({ Name => $name, @properties });
+	    $dtd_h->subdoc_entity_decl ({ Name => $name, @properties })
+		if ($dtd_h->can('subdoc_entity_decl'));
 
 	    @properties = (); undef $files;
 	    next;
@@ -368,7 +392,8 @@ sub parse_fh {
 	    if (defined $files) {
 		push (@properties, GeneratedId => $files);
 	    }
-	    $dtd_h->external_sgml_entity_decl ({ Name => $name, @properties });
+	    $dtd_h->external_sgml_entity_decl ({ Name => $name, @properties })
+		if ($dtd_h->can('external_sgml_entity_decl'));
 
 	    @properties = (); undef $files;
 	    next;
@@ -376,35 +401,48 @@ sub parse_fh {
 
 	if (/^D/) {             # data attribute
 	    # FIXME
-	    $err_h->error ({ Message => "XML::ESISParser: can't handle data attributes yet\n" });
+	    my $message = "XML::ESISParser: can't handle data attributes yet\n";
+	    if ($err_h->can('error')) {
+		$err_h->error ({ Message => $message });
+	    } else {
+		die "$message";
+	    }
 
 	    next;
 	}
 
 	if (/^D/) {             # link attribute
 	    # FIXME
-	    $err_h->error ({ Message => "XML::ESISParser: can't handle link attributes yet\n" });
+	    my $message = "XML::ESISParser: can't handle link attributes yet\n";
+	    if ($err_h->can('error')) {
+		$err_h->error ({ Message => $message });
+	    } else {
+		die "$message";
+	    }
 
 	    next;
 	}
 
 	if (/^{/) {		# subdoc start
 	    my ($name) = $';
-	    $doc_h->start_subdoc ({ Name => $name });
+	    $doc_h->start_subdoc ({ Name => $name })
+		if ($doc_h->can('start_subdoc'));
 
 	    next;
 	}
 
 	if (/^}/) {		# subdoc end
 	    my ($name) = $';
-	    $doc_h->end_subdoc ({ Name => $name });
+	    $doc_h->end_subdoc ({ Name => $name })
+		if ($doc_h->can('end_subdoc'));
 
 	    next;
 	}
 
 	if (/^#/) {		# appinfo
 	    my ($text) = $';
-	    $doc_h->appinfo ({ Text => $text });
+	    $doc_h->appinfo ({ Text => $text })
+	        if ($doc_h->can('appinfo'));
 
 	    next;
 	}
@@ -422,23 +460,37 @@ sub parse_fh {
 	}
 
 	if (/^C/) {		# conforming
-	    $doc_h->conforming({});
+	    $doc_h->conforming({})
+		if ($doc_h->can('conforming'));
 
 	    next;
 	}
 
 	if (/^$self->{ParseOptions}{NSGMLS}:/) {	# `nsgmls' error
-	    # $_ is quoted to create a copy, lest $_ change within `error'
-	    $err_h->error ({ Message => "$_" });
+	    my $message = $_;
+	    if ($err_h->can('error')) {
+		$err_h->error ({ Message => $message });
+	    } else {
+		die "$message\n";
+	    }
 
 	    next;
 	}
 
 	my ($op) = substr ($_, 0, 1);
-	$err_h->error ({ Message => "XML::ESISParser::parse_fh: ESIS command character \`$op' not recognized" });
+	my $message = "XML::ESISParser::parse_fh: ESIS command character \`$op' not recognized";
+	if ($err_h->can('error')) {
+	    $err_h->error ({ Message => $message });
+	} else {
+	    die "$message";
+	}
     }
 
-    return $doc_h->end_document({});
+    if ($doc_h->can('end_document')) {
+	return $doc_h->end_document({});
+    } else {
+	return ();
+    }
 }
 
 1;

@@ -3,7 +3,7 @@
 # XML::PatAct::MatchName is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: MatchName.pm,v 1.1 1999/08/10 21:42:39 kmacleod Exp $
+# $Id: MatchName.pm,v 1.2 1999/08/16 16:04:03 kmacleod Exp $
 #
 
 use strict;
@@ -11,7 +11,8 @@ use strict;
 package XML::PatAct::MatchName;
 
 sub new {
-    my $type = shift; my $self = { @_ };
+    my $type = shift;
+    my $self = ($#_ == 0) ? { %{ (shift) } } : { @_ };
 
     return bless $self, $type;
 }
