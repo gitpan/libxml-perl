@@ -3,7 +3,7 @@
 # XML::Parser::PerlSAX is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: PerlSAX.pm,v 1.2 1999/05/07 20:07:00 kmacleod Exp $
+# $Id: PerlSAX.pm,v 1.3 1999/08/10 18:46:13 kmacleod Exp $
 #
 
 use strict;
@@ -167,13 +167,13 @@ sub _handle_init {
 
     $self->{Expat} = $expat;
 
-    $self->{DocumentHandler}->start_document;
+    $self->{DocumentHandler}->start_document( { } );
 }
 
 sub _handle_final {
     my $self = shift;
 
-    return $self->{DocumentHandler}->end_document;
+    return $self->{DocumentHandler}->end_document( { } );
 }
 
 sub _handle_start {
@@ -398,10 +398,10 @@ XML::Parser::PerlSAX - Perl SAX parser using XML::Parser
 
 =head1 DESCRIPTION
 
-C<XML::Parser::PerlSAX> is a Perl SAX parser using the XML::Parser
+C<XML::Parser::PerlSAX> is a PerlSAX parser using the XML::Parser
 module.  This man page summarizes the specific options, handlers, and
 properties supported by C<XML::Parser::PerlSAX>; please refer to the
-Perl SAX standard in `C<SAX.pod>' for general usage information.
+PerlSAX standard in `C<PerlSAX.pod>' for general usage information.
 
 =head1 METHODS
 

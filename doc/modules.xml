@@ -69,6 +69,34 @@
       <category>XML::Parser</category>
     </package>
     <package>
+      <name>XML::PatAct::ActionTempl</name>
+      <category>PatAct</category>
+      <category>PatAct Action</category>
+    </package>
+    <package>
+      <name>XML::PatAct::Amsterdam</name>
+      <category>PerlSAX</category>
+      <category>XML Conversion</category>
+      <category>PatAct</category>
+      <category>PatAct Action</category>
+    </package>
+    <package>
+      <name>XML::PatAct::MatchName</name>
+      <category>PatAct</category>
+      <category>PatAct Pattern</category>
+    </package>
+    <package>
+      <name>XML::PatAct::PatternTempl</name>
+      <category>PatAct</category>
+      <category>PatAct Pattern</category>
+    </package>
+    <package>
+      <name>XML::PatAct::ToObjects</name>
+      <category>PatAct</category>
+      <category>PatAct Action</category>
+      <category>XML Conversion</name>
+    </package>
+    <package>
       <name>XML::Perl2SAX</name>
       <category>PerlSAX</name>
     </package>
@@ -184,11 +212,6 @@
     <package>
       <name>XML::Grove::Subst</name>
       <category>XML::Grove</name>
-    </package>
-    <package>
-      <name>XML::Grove::ToObjects</name>
-      <category>XML::Grove</name>
-      <category>XML Conversion</name>
     </package>
   </module>
 

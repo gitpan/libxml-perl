@@ -2,6 +2,9 @@
 #
 # Before `make install' is performed this script should be runnable with
 # `make test'. After `make install' it should work as `perl test.pl'
+#
+# $Id: canon_xml_writer.t,v 1.2 1999/08/10 21:42:39 kmacleod Exp $
+#
 
 ######################### We start with some black magic to print on failure.
 

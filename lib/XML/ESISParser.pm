@@ -2,7 +2,7 @@
 # Copyright (C) 1999 Ken MacLeod
 # See the file COPYING for distribution terms.
 #
-# $Id: ESISParser.pm,v 1.4 1999/05/07 20:07:00 kmacleod Exp $
+# $Id: ESISParser.pm,v 1.5 1999/08/10 18:46:13 kmacleod Exp $
 #
 
 use strict;
@@ -180,7 +180,7 @@ sub parse_fh {
     my $err_h = $self->{ParseOptions}{ErrorHandler};
 
     my $line = 0;
-    $doc_h->start_document;
+    $doc_h->start_document( { } );
 
     # 30% speed improvement by breaking the encapsulation
     my ($is_filehandle) = (ref ($file) eq "FileHandle"

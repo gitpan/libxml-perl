@@ -2,6 +2,19 @@ Revision history for Perl extension libxml
 
 Backwards incompatible changes are marked with a `*'.
 
+0.04
+	- README: updated with PatAct modules
+	- added Creating PatAct Modules and Using PatAct Modules docs
+	- added XML::PatAct::ActionTempl, XML::PatAct::Amsterdam,
+	  XML::PatAct::MatchName, XML::PatAct::PatternTempl,
+	  XML::PatAct::ToObjects
+	- added schema.pl and schema.xml examples
+	- added schema.t test
+	- fixes
+	  - XML::Parser::PerlSAX and XML::ESISParser were not passing
+	    a hash for start_document() or end_document() per spec
+	  - t/canon_xml_writer.t, t/xp_sax.t: added CVS ID
+
 0.03  Wed May 26 19:49:46 CDT 1999
 	- added XML::Handler::CanonXMLWriter and test
 

@@ -1,3 +1,29 @@
+1999-08-10  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* README, doc/modules.xml: updated with PatAct modules
+
+	* lib/XML/PatAct/ActionTempl.pm, lib/XML/PatAct/Amsterdam.pm,
+	lib/XML/PatAct/MatchName.pm, lib/XML/PatAct/PatternTempl.pm,
+	lib/XML/PatAct/ToObjects.pm: added
+
+	* t/xp_sax.t, t/canon_xml_writer.t: added CVS ID
+
+	* t/schema.t: added
+
+	* examples/schema.xml, examples/schema.pl: added
+
+	* doc/UsingPatActModules.pod, doc/CreatingPatActModules.pod: added
+
+	* lib/XML/Parser/PerlSAX.pm (_handle_extern_ent): change "Perl
+	SAX" to "PerlSAX" in doc
+
+1999-08-09  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* lib/XML/ESISParser.pm (parse_fh): was not passing an empty hash
+
+	* lib/XML/Parser/PerlSAX.pm (_handle_init, _handle_final): was not
+	passing an empty hash
+
 1999-05-26  Ken MacLeod  <kmacleod@serpentina.terrapinlabs.com>
 
 	* lib/XML/Handler/CanonXMLWriter.pm, t/canon_xml_writer.t: added

@@ -1,4 +1,4 @@
-$Id: README,v 1.7 1999/05/23 17:37:05 kmacleod Exp $
+$Id: README,v 1.8 1999/08/10 21:42:39 kmacleod Exp $
 
 
 			     libxml-perl
@@ -79,6 +79,26 @@ MODULES
         filters.  These modules translate parse events between the
         Java/CORBA style SAX methods and PerlSAX style methods.
 
+    XML::PatAct::MatchName     ALPHA
+        MatchName is a pattern matching module that can be used with
+        PatAct action modules.  MatchName uses simple element names or
+        element name lists to match names to actions.
+
+    XML::PatAct::ToObjects     ALPHA
+        ToObjects is a PatAct action module.  ToObjects can be used to
+        create application-ready Perl objects from XML instances.
+
+    XML::PatAct::Amsterdam     ALPHA
+        Amsterdam is a PatAct action module.  Amsterdam can be used to
+        apply a very simple form of style-sheet to an XML instance by
+        using ``before'' and ``after'' strings that are output before
+        and after the contents of elements.
+
+    XML::PatAct::PatternTempl  BETA
+    XML::PatAct::ActionTempl   BETA
+        PatternTempl and ActionTempl are template files that
+        pattern/action module writers can copy to create new modules.
+        See Creating PatAct Modules for more information.
 
 DOCUMENTS
 
@@ -88,8 +108,16 @@ DOCUMENTS
         interface described in PerlSAX.
 
     UsingPerlSAX
-        UsingPerlSAX is a brief introduction to PerlSAX using the
-        XML::Parser::PerlSAX module.
+        A brief introduction to PerlSAX using the XML::Parser::PerlSAX
+        module.
+
+    UsingPatActModules
+        Describes how to use pattern/action modules to transform XML
+        instances.
+
+    CreatingPatActModules
+        A document for module writers who are writing new pattern/
+        action modules.
 
     modules.xml
         modules.xml contains a listing of all Perl XML packages and
