@@ -1,3 +1,12 @@
+2000-02-22  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* doc/mirror.sh, doc/index.html: added
+
+2000-02-17  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* doc/modules.xml: fixed several well-formedness errors; reported
+	by KangChan Lee <dolphin@ce.cnu.ac.kr>
+
 1999-12-22  Ken MacLeod  <ken@jess>
 
 	* lib/Data/Grove.pm, lib/Data/Grove/Parent.pm,

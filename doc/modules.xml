@@ -6,7 +6,7 @@
     <package>
       <name>Apache-MimeXML</name>
       <category>XML</category>
-    </package
+    </package>
   </module>
 
   <module>
@@ -31,8 +31,8 @@
     <name>CGI-XMLForm</name>
     <package>
       <name>CGI::XMLForm</name>
-      <category>XML::Parser</name>
-      <category>XML Conversion</name>
+      <category>XML::Parser</category>
+      <category>XML Conversion</category>
     </package>
   </module>
 
@@ -40,7 +40,7 @@
     <name>DBIx-XML_RDB</name>
     <package>
       <name>DBIx::XML_RDB</name>
-      <category>XML Conversion</name>
+      <category>XML Conversion</category>
     </package>
   </module>
 
@@ -52,7 +52,7 @@
     </package>
     <package>
       <name>Data::Grove::Visitor</name>
-      <category>Data::Grove</name>
+      <category>Data::Grove</category>
     </package>
     <package>
       <name>XML::ESISParser</name>
@@ -109,16 +109,16 @@
       <name>XML::PatAct::ToObjects</name>
       <category>PatAct</category>
       <category>PatAct Action</category>
-      <category>XML Conversion</name>
+      <category>XML Conversion</category>
     </package>
     <package>
       <name>XML::Perl2SAX</name>
-      <category>PerlSAX</name>
+      <category>PerlSAX</category>
     </package>
     <package>
       <name>XML::SAX2Perl</name>
-      <category>PerlSAX</name>
-    </package
+      <category>PerlSAX</category>
+    </package>
   </module>
 
   <module>
@@ -171,7 +171,7 @@
     <name>XML-Encoding</name>
     <package>
       <name>XML::Encoding</name>
-      <category>XML::Parser</name>
+      <category>XML::Parser</category>
     </package>
   </module>
 
@@ -187,8 +187,8 @@
     <name>XML-Grove</name>
     <package>
       <name>XML::Grove</name>
-      <category>XML Objects</name>
-      <category>Data::Grove</name>
+      <category>XML Objects</category>
+      <category>Data::Grove</category>
     </package>
     <package>
       <name>XML::Grove::AsCanonXML</name>
@@ -222,11 +222,11 @@
     </package>
     <package>
       <name>XML::Grove::Sub</name>
-      <category>XML::Grove</name>
+      <category>XML::Grove</category>
     </package>
     <package>
       <name>XML::Grove::Subst</name>
-      <category>XML::Grove</name>
+      <category>XML::Grove</category>
     </package>
   </module>
 

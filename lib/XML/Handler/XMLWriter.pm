@@ -15,7 +15,7 @@ use XML::Handler::Subs;
 use vars qw{ $VERSION @ISA $escapes };
 
 # will be substituted by make-rel script
-$VERSION = "0.00";
+$VERSION = "0.07";
 
 @ISA = qw{ XML::Handler::Subs };
 

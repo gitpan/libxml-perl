@@ -1,8 +1,8 @@
 Summary: Collection of Perl modules for working with XML
 Name: libxml-perl
-Version: 0.06
+Version: 0.07
 Release: 1
-Source: http://www.perl.com/CPAN/modules/by-module/XML/libxml-perl-0.06.tar.gz
+Source: http://www.perl.com/CPAN/modules/by-module/XML/libxml-perl-0.07.tar.gz
 Copyright: Artistic or GPL
 Group: Applications/Publishing/XML
 URL: http://www.perl.com/
@@ -29,7 +29,7 @@ make
 
 make PREFIX="${RPM_ROOT_DIR}/usr" pure_install
 
-DOCDIR="${RPM_ROOT_DIR}/usr/doc/libxml-perl-0.06-1"
+DOCDIR="${RPM_ROOT_DIR}/usr/doc/libxml-perl-0.07-1"
 mkdir -p "$DOCDIR/examples"
 for ii in PerlSAX.pod UsingPerlSAX.pod interface-style.pod modules.xml; do
   cp doc/$ii "$DOCDIR/$ii"
@@ -42,7 +42,7 @@ done
 
 %files
 
-/usr/doc/libxml-perl-0.06-1
+/usr/doc/libxml-perl-0.07-1
 
 /usr/lib/perl5/Data/Grove.pm
 /usr/lib/perl5/Data/Grove/Parent.pm

@@ -17,7 +17,7 @@ use vars qw{ $VERSION $NSGMLS_sgml $NSGMLS_FLAGS_sgml $NSGMLS_ENV_sgml
 	     $XML_DECL };
 
 # will be substituted by make-rel script
-$VERSION = "0.00";
+$VERSION = "0.07";
 
 $NSGMLS_sgml = 'nsgmls';
 $NSGMLS_FLAGS_sgml = '-oentity -oempty -onotation-sysid -oincluded -oline';

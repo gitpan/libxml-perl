@@ -19,7 +19,7 @@ package XML::PatAct::ToObjects;
 use vars qw{ $VERSION $name_re };
 
 # will be substituted by make-rel script
-$VERSION = "0.00";
+$VERSION = "0.07";
 
 # FIXME I doubt this is a correct Perl RE for productions [4] and
 # [5] in the XML 1.0 specification, especially considering Unicode chars

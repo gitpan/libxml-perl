@@ -14,7 +14,7 @@ package Data::Grove::Visitor;
 use vars qw{ $VERSION };
 
 # will be substituted by make-rel script
-$VERSION = "0.00";
+$VERSION = "0.07";
 
 # The following methods extend Data::Grove
 package Data::Grove;

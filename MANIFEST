@@ -4,12 +4,14 @@ MANIFEST
 Makefile.PL
 README
 libxml-perl.spec
-libxml-perl-0.06.spec
+libxml-perl-0.07.spec
 doc/CreatingPatActModules.pod
 doc/PerlSAX.pod
 doc/UsingPatActModules.pod
 doc/UsingPerlSAX.pod
+doc/index.html
 doc/interface-style.pod
+doc/mirror.sh
 doc/modules.xml
 lib/Data/Grove.pm
 lib/Data/Grove/Parent.pm
