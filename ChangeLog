@@ -1,4 +1,39 @@
+2003-10-21  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* t/stream.t: fixed test 11 for Perl >= 5.6
+
+2001-07-23  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* lib/XML/SAX2Perl.pm (startElement): typo; reported by
+	mhershb@mcdermott.com (Mark A. Hershberger)
+
+2000-03-30  Ken MacLeod  <ken@localhost.localdomain>
+
+	* doc/index.html (Contributors): added Clark Cooper
+
+	* MANIFEST (doc/sax-2.0.html, doc/sax-2.0-adv.html): added
+
+2000-03-20  Ken MacLeod  <ken@localhost.localdomain>
+
+	* lib/Data/Grove/Visitor.pm (_children_accept_name): add return
+	@return; reported by Laurent CAPRANI <caprani@multimania.com>
+
+2000-03-07  Ken MacLeod  <ken@localhost.localdomain>
+
+	* doc/sax-2.0.html, doc/sax-2.0-adv.html: added
+
+2000-03-02  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* lib/XML/ESISParser.pm: add -E0 to NSGMLS_FLAGS to not limit the
+	number of errors reported; suggested by Charles Thayer
+	<thayer@mediabridge.com>
+	(parse_fh): report line and line number on command character
+	errors; also suggested by Charles
+
 2000-02-22  Ken MacLeod  <ken@bitsko.slc.ut.us>
+
+	* doc/index.html (Contributors): added Michael Koehne, KangChan
+	Lee, and Colin Muller
 
 	* doc/mirror.sh, doc/index.html: added
 

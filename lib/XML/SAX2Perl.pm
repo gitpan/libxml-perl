@@ -3,7 +3,7 @@
 # XML::SAX2Perl is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: SAX2Perl.pm,v 1.3 1999/12/22 21:15:00 kmacleod Exp $
+# $Id: SAX2Perl.pm,v 1.4 2001/07/23 15:47:15 kmacleod Exp $
 #
 
 use strict;
@@ -13,7 +13,7 @@ package XML::SAX2Perl;
 use vars qw{ $VERSION };
 
 # will be substituted by make-rel script
-$VERSION = "0.07";
+$VERSION = "0.08";
 
 sub new {
     my $type = shift;
@@ -47,7 +47,7 @@ sub endDocument {
 sub startElement {
     my $self = shift;
     my $name = shift;
-    my $atts = shift;
+    my $attributes = shift;
 
     # FIXME depends on how Perl SAX treats attributes
     $self->{DocumentHandler}->start_element(Name => $name, Attributes => $attributes);

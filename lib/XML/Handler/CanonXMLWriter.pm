@@ -12,7 +12,7 @@ package XML::Handler::CanonXMLWriter;
 use vars qw{ $VERSION %char_entities };
 
 # will be substituted by make-rel script
-$VERSION = "0.07";
+$VERSION = "0.08";
 
 %char_entities = (
     "\x09" => '&#9;',

@@ -2,6 +2,35 @@ Revision history for Perl extension libxml
 
 Backwards incompatible changes are marked with a `*'.
 
+ToDo
+        - XML::ESISParser: include Robert Braddock's update for OpenSP,
+	  in email 25Jul
+	- XML::Parser::PerlSAX doesn't pass ParseParamEnt to
+	  XML::Parser, inspired by a request by Paul Mahoney
+	  <ptm@xact.co.uk>
+	- switch Data::Grove::Visitor to use UNIVERSAL::can instead of
+	  $self->{'has'}, suggested by Mike Richardson
+	  <mike@quaking.demon.co.uk>
+	- no modules are yet supporting SAX2
+	- XML::Parser::PerlSAX doesn't implement ErrorHandler, it
+	  should at least call fatal_error() if XML::Parser dies;
+	  reported by Craig N. Caroon <caroon@caroon.nando.net>
+
+0.08  Tue Oct 21 10:54:18 CDT 2003
+	- added Perl SAX 2.0 Binding
+	- XML::ESISParser: add -E0 to nsgmls options so that nsgmls
+	  doesn't quit after 200 errors.  Add more detail to command
+	  character error message.  Suggested by Charles Thayer
+	  <thayer@mediabridge.com>.
+	- fixes
+	  - Data::Grove::Visitor: children_accept_name was not
+	    returning any data in some cases; reported by Laurent
+            CAPRANI <caprani@multimania.com>
+	  - XML::SAX2Perl: typo in startElement; reported by Mark
+	    A. Hershberger <mhershb@mcdermott.com>
+          - t/stream.t Test 11 fails due to 8-bit characters on Perl
+            5.6, first reported by Ed Arnold <era@ucar.edu>
+
 0.07  Tue Feb 22 14:24:52 CST 2000
 	- doc/index.html: libxml-perl site index
 	- doc/mirror.sh: creates a libxml-perl mirror site

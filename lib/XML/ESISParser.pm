@@ -2,7 +2,7 @@
 # Copyright (C) 1999 Ken MacLeod
 # See the file COPYING for distribution terms.
 #
-# $Id: ESISParser.pm,v 1.8 1999/12/22 21:15:00 kmacleod Exp $
+# $Id: ESISParser.pm,v 1.9 2000/03/02 20:18:09 kmacleod Exp $
 #
 
 use strict;
@@ -17,15 +17,15 @@ use vars qw{ $VERSION $NSGMLS_sgml $NSGMLS_FLAGS_sgml $NSGMLS_ENV_sgml
 	     $XML_DECL };
 
 # will be substituted by make-rel script
-$VERSION = "0.07";
+$VERSION = "0.08";
 
 $NSGMLS_sgml = 'nsgmls';
-$NSGMLS_FLAGS_sgml = '-oentity -oempty -onotation-sysid -oincluded -oline';
+$NSGMLS_FLAGS_sgml = '-oentity -oempty -onotation-sysid -oincluded -oline -E0';
 $NSGMLS_ENV_sgml = '';
 
 $NSGMLS_xml = 'nsgmls';
 $XML_DECL = '/usr/lib/sgml/declaration/xml.decl';
-$NSGMLS_FLAGS_xml = '-oentity -oempty -onotation-sysid -oline -oincluded -wxml ';
+$NSGMLS_FLAGS_xml = '-oentity -oempty -onotation-sysid -oline -oincluded -wxml -E0 ';
 $NSGMLS_ENV_xml = 'SP_CHARSET_FIXED=YES SP_ENCODING=XML';
 
 sub new {
@@ -485,7 +485,7 @@ sub parse_fh {
 	}
 
 	my ($op) = substr ($_, 0, 1);
-	my $message = "XML::ESISParser::parse_fh: ESIS command character \`$op' not recognized";
+	my $message = "XML::ESISParser::parse_fh: ESIS command character \`$op' not recognized when reading line \`$_' around line $line ($.)";
 	if ($err_h->can('error')) {
 	    $err_h->error ({ Message => $message });
 	} else {

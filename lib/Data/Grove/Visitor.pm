@@ -3,7 +3,7 @@
 # Data::Grove::Visitor is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: Visitor.pm,v 1.5 1999/12/22 21:15:00 kmacleod Exp $
+# $Id: Visitor.pm,v 1.6 2000/03/20 23:06:45 kmacleod Exp $
 #
 
 use strict;
@@ -14,7 +14,7 @@ package Data::Grove::Visitor;
 use vars qw{ $VERSION };
 
 # will be substituted by make-rel script
-$VERSION = "0.07";
+$VERSION = "0.08";
 
 # The following methods extend Data::Grove
 package Data::Grove;
@@ -122,6 +122,8 @@ sub _children_accept_name {
     for ($ii = 0; $ii <= $#$array; $ii ++) {
 	push @return, $array->[$ii]->accept_name ($visitor, @_);
     }
+
+    return @return;
 }
 
 1;

@@ -3,7 +3,7 @@
 # Before `make install' is performed this script should be runnable with
 # `make test'. After `make install' it should work as `perl test.pl'
 #
-# $Id: stream.t,v 1.1 1999/08/16 16:04:03 kmacleod Exp $
+# $Id: stream.t,v 1.2 2003/10/21 16:01:54 kmacleod Exp $
 #
 
 ######################### We start with some black magic to print on failure.
@@ -61,7 +61,7 @@ $expected = <<"EOF;";
     3rd line in bar <!--  Isn't this a doozy  -->
   </bar>
   <zap fubar="1" ref="zing"></zap>
-  This, '\302\240', would be a bad character in UTF-8.
+  This, '\240', would be a bad character in UTF-8.
 </foo>
 EOF;
 
