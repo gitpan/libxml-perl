@@ -8,7 +8,7 @@
 
 use ExtUtils::MakeMaker;
 
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.

@@ -1,3 +1,7 @@
+1999-05-26  Ken MacLeod  <kmacleod@serpentina.terrapinlabs.com>
+
+	* lib/XML/Handler/CanonXMLWriter.pm, t/canon_xml_writer.t: added
+
 1999-05-23  Ken MacLeod  <ken@bitsko.slc.ut.us>
 
 	* lib/Data/Grove/Tied.pm: renamed to Parent.pm

@@ -2,7 +2,10 @@ Revision history for Perl extension libxml
 
 Backwards incompatible changes are marked with a `*'.
 
-0.02
+0.03  Wed May 26 19:49:46 CDT 1999
+	- added XML::Handler::CanonXMLWriter and test
+
+0.02  Mon May 24 18:02:00 CDT 1999
 	- renamed package from `libxml' to `libxml-perl'
 	- added doc/modules.xml
 	- added doc/UsingPerlSAX.pod and example files

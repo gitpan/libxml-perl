@@ -10,7 +10,7 @@ Packager: ken@bitsko.slc.ut.us (Ken MacLeod)
 BuildRoot: /tmp/libxml-perl
 
 #
-# $Id: libxml-perl.spec,v 1.1 1999/05/23 17:37:06 kmacleod Exp $
+# $Id: libxml-perl.spec,v 1.2 1999/05/27 00:59:56 kmacleod Exp $
 #
 
 %description
@@ -48,6 +48,7 @@ done
 /usr/lib/perl5/Data/Grove/Parent.pm
 /usr/lib/perl5/Data/Grove/Visitor.pm
 /usr/lib/perl5/XML/ESISParser.pm
+/usr/lib/perl5/XML/Handler/CanonXMLWriter.pm
 /usr/lib/perl5/XML/Handler/Sample.pm
 /usr/lib/perl5/XML/SAX2Perl.pm
 /usr/lib/perl5/XML/Perl2SAX.pm
@@ -55,6 +56,7 @@ done
 /usr/lib/perl5/man/man3/Data::Grove.3
 /usr/lib/perl5/man/man3/Data::Grove::Parent.3
 /usr/lib/perl5/man/man3/Data::Grove::Visitor.3
+/usr/lib/perl5/man/man3/XML::Handler::CanonXMLWriter.3
 /usr/lib/perl5/man/man3/XML::Handler::Sample.3
 /usr/lib/perl5/man/man3/XML::ESISParser.3
 /usr/lib/perl5/man/man3/XML::SAX2Perl.3
