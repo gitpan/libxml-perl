@@ -3,12 +3,17 @@
 # XML::SAX2Perl is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: SAX2Perl.pm,v 1.2 1999/02/16 00:12:37 kmacleod Exp $
+# $Id: SAX2Perl.pm,v 1.3 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 use strict;
 
 package XML::SAX2Perl;
+
+use vars qw{ $VERSION };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 sub new {
     my $type = shift;

@@ -3,7 +3,7 @@
 # XML::PatAct::Amsterdam is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: Amsterdam.pm,v 1.2 1999/08/16 16:04:03 kmacleod Exp $
+# $Id: Amsterdam.pm,v 1.4 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 use strict;
@@ -11,6 +11,11 @@ use strict;
 use UNIVERSAL;
 
 package XML::PatAct::Amsterdam;
+
+use vars qw{ $VERSION };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 sub new {
     my $type = shift;
@@ -45,11 +50,18 @@ sub start_document {
 
     $self->{ActionStack} = [ ];
 
-    if (!defined $self->{File}) {
+    # create a temporary Output_ in case we're creating a standard
+    # output file that we'll delete later.
+    if (!$self->{AsString} && !defined($self->{Output})) {
 	require IO::File;
 	import IO::File;
-	$self->{File} = IO::File->new('>-');
-	$self->{DeleteFile} = 1;
+	$self->{Output_} = new IO::File(">-");
+    } elsif (defined($self->{Output})) {
+	$self->{Output_} = $self->{Output};
+    }
+
+    if ($self->{AsString}) {
+	$self->{Strings} = [];
     }
 }
 
@@ -59,16 +71,21 @@ sub end_document {
     # notify the pattern module that we're done
     $self->{Matcher}->finalize();
 
-    my $value;
-    if ($self->{DeleteFile}) {
-	$self->{File} = $self->{DeleteFile} = undef;
+    if (defined($self->{Output_})) {
+	delete $self->{Output_};
+    }
+
+    my $string = undef;
+    if (defined($self->{AsString})) {
+	$string = join('', @{$self->{Strings}});
+	delete $self->{Strings};
     }
 
     # release all the info that is just used during event handling
     $self->{Matcher} = $self->{Names} = $self->{Nodes} = undef;
     $self->{ActionStack} = undef;
 
-    return $value;
+    return($string);
 }
 
 sub start_element {
@@ -90,8 +107,15 @@ sub start_element {
 
     push @{$self->{ActionStack}}, $action;
 
-    if (defined($action) && defined($action->{Before})) {
-	$self->{File}->print($action->{Before});
+    if (defined($action)) {
+	my $before = $action->{Before};
+	if (defined $before) {
+	    my $atts = $element->{Attributes};
+	    $before =~ s/\[([\w.:]+)\]/
+		($1 eq '_element') ? $element->{Name} : $atts->{$1}
+	    /eg;
+	    $self->print($before);
+	}
     }
 }
 
@@ -103,15 +127,32 @@ sub end_element {
 
     my $action = pop @{$self->{ActionStack}};
 
-    if (defined($action) && defined($action->{After})) {
-	$self->{File}->print($action->{After});
+    if (defined($action)) {
+	my $after = $action->{After};
+	if (defined $after) {
+	    my $atts = $element->{Attributes};
+	    $after =~ s/\[([\w.:]+)\]/
+		($1 eq '_element') ? $element->{Name} : $atts->{$1}
+	    /eg;
+	    $self->print($after);
+	}
     }
 }
 
 sub characters {
     my ($self, $characters) = @_;
 
-    $self->{File}->print($characters->{Data});
+    $self->print($characters->{Data});
+}
+
+sub print {
+    my ($self, $output) = @_;
+
+    $self->{Output_}->print($output)
+	if (defined($self->{Output_}));
+
+    push(@{$self->{Strings}}, $output)
+	if (defined($self->{AsString}));
 }
 
 1;
@@ -130,9 +171,7 @@ XML::PatAct::Amsterdam - An action module for simplistic style-sheets
 			       After => 'after' },
 		  ... ];
 
- my $matcher = XML::PatAct::Amsterdam->new( Patterns => $patterns,
-					    Matcher => $matcher,
-					    File => $file );
+ my $matcher = XML::PatAct::Amsterdam->new( I<OPTIONS> );
 
 
 =head1 DESCRIPTION
@@ -148,16 +187,39 @@ it's limitations quickly with even moderately complex XML instances,
 be aware of and prepared to switch to more complete style modules.
 
 New XML::PatAct::Amsterdam instances are creating by calling `new()'.
-Parameters can be passed as a list of key, value pairs or a hash.
-A Patterns and Matcher options are required.  Patterns is the
-pattern-action list to apply.  Matcher is an instance of the pattern
-or query matching module.  The File option is an open io handle (see
-IO::Handle) to write to, if the File option is missing, Amsterdam
-defaults to writing to standard output.
+Parameters can be passed as a list of key, value pairs or a hash.  A
+Patterns and Matcher options are required.  The following I<OPTIONS>
+are supported:
 
-Each action in Amsterdam contains either or both a Before and an After
-string to copy to the output before and after processing an XML
-element.
+=over 4
+
+=item Patterns
+
+The pattern-action list to apply.  The list is an anonymous array of
+pattern, action pairs.  Each action in the list contains either or
+both a Before and an After string to copy to the output before and
+after processing an XML element.  The Before and After strings may
+contain attribute names enclosed in square brackets (`C<[>' I<NAME>
+`C<]>'), these are replaced with the value of the attribute with that
+name.  The special I<NAME> `C<_element>' will be replaced with the
+element's name.
+
+=item Matcher
+
+An instance of the pattern or query matching module.
+
+=item Output
+
+An IO::Handle or one of it's subclasses (such as IO::File), if this
+parameter is not present and the AsString option is not used, the
+module will write to standard output.
+
+=item AsString
+
+Return the generated output as a string from the `C<parse()>' method
+of the PerlSAX event generator.
+
+=back
 
 =head1 AUTHOR
 

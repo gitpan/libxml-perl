@@ -3,7 +3,7 @@
 # XML::PatAct::ToObjects is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: ToObjects.pm,v 1.3 1999/08/16 16:04:03 kmacleod Exp $
+# $Id: ToObjects.pm,v 1.5 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 # The original XML::Grove::ToObjects actually generated and compiled a
@@ -16,7 +16,10 @@ use strict;
 use UNIVERSAL;
 
 package XML::PatAct::ToObjects;
-use vars qw{$name_re};
+use vars qw{ $VERSION $name_re };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 # FIXME I doubt this is a correct Perl RE for productions [4] and
 # [5] in the XML 1.0 specification, especially considering Unicode chars
@@ -73,6 +76,11 @@ sub start_document {
     $self->{Nodes} = [ ];
     $self->{Data} = undef;
     $self->{SourceIsGrove} = UNIVERSAL::isa($document, 'Data::Grove');
+    if (!defined $self->{CharacterDataType}) {
+	require Data::Grove;
+	import Data::Grove;
+	$self->{CharacterDataType} = 'Data::Grove::Characters';
+    }
 }
 
 sub end_document {
@@ -118,7 +126,7 @@ sub start_element {
 
     return if (($state ne 'normal') && ($state ne 'pcdata'));
 
-    if (defined $action->{PCData}) {
+    if (defined($action) and defined($action->{PCData})) {
 	$self->{States}[-1] = 'pcdata';
     }
 
@@ -169,8 +177,8 @@ sub start_element {
 	if ($action->{Make} eq 'HASH') {
 	    push @{$self->{Parents}}, { @args };
 	} else {
-	    my $is_defined;
-	    eval "\$is_defined = defined %{$action->{Make}" . "::}";
+	    my $is_defined = 0;
+	    #eval "\$is_defined = defined %{$action->{Make}" . "::}";
 	    if ($is_defined) {
 		push @{$self->{Parents}}, $action->{Make}->new( @args );
 	    } else {
@@ -184,10 +192,13 @@ sub start_element {
 	    if (!$self->{SourceIsGrove}) {
 		$self->{GroveBuilder}->start_document( { } );
 	    }
-	} 
+	}
+
+	return;
     }
 
-    # all other actions occur at end_element()
+    # Place to store all the rest of gathered contents
+    push (@{$self->{Parents}}, { } );
 }
 
 sub end_element {
@@ -235,6 +246,8 @@ sub end_element {
 		    $self->{GroveBuilder}->end_document({ })->{Contents};
 	    }
 	}
+    } else {
+	$value = pop(@{$self->{Parents}})->{Contents};
     }
 
     if ($action->{FieldIsArray}) {
@@ -255,7 +268,8 @@ sub characters {
     } elsif ($state eq 'as-grove' and !$self->{SourceIsGrove}) {
 	$self->{GroveBuilder}->characters($characters);
     } elsif ($state eq 'pcdata') {
-	push @{$self->{Parents}[-1]{Contents}}, $characters->{Data};
+	push (@{$self->{Parents}[-1]{Contents}},
+	      $self->{CharacterDataType}->new(%$characters));
     }
 }
 
@@ -280,7 +294,6 @@ sub _parse_action {
 	} elsif ($option eq '-args') {
 	    my $args = shift @$source;
 	    $args =~ s/%\{($name_re)\}/(\$element->{Attributes}{'$1'})/g;
-	    print "$args\n";
 	    $action->{Args} = $args;
 	} elsif ($option eq '-field') {
 	    $action->{Field} = shift @$source;

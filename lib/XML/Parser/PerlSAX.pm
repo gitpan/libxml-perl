@@ -3,7 +3,7 @@
 # XML::Parser::PerlSAX is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: PerlSAX.pm,v 1.5 1999/08/16 16:04:03 kmacleod Exp $
+# $Id: PerlSAX.pm,v 1.7 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 use strict;
@@ -12,6 +12,14 @@ package XML::Parser::PerlSAX;
 
 use XML::Parser;
 use UNIVERSAL;
+use vars qw{ $VERSION $name_re };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
+
+# FIXME I doubt this is a correct Perl RE for productions [4] and
+# [5] in the XML 1.0 specification, especially considering Unicode chars
+$name_re = '[A-Za-z_:][A-Za-z0-9._:-]*';
 
 sub new {
     my $type = shift;
@@ -76,6 +84,14 @@ sub parse {
 	    if (UNIVERSAL::can($doc_h, 'processing_instruction'));
 	push (@handlers, Comment => sub { $self->_handle_comment(@_) } )
 	    if (UNIVERSAL::can($doc_h, 'comment'));
+	push (@handlers, CdataStart => sub { $self->_handle_cdatastart(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'start_cdata'));
+	push (@handlers, CdataEnd => sub { $self->_handle_cdataend(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'end_cdata'));
+	if (UNIVERSAL::can($doc_h, 'entity_reference')) {
+	    push (@handlers, Default => sub { $self->_handle_default(@_) } );
+	    $self->{UseEntRefs} = 1;
+	}
     }
 
     if (defined $parse_options->{DTDHandler}) {
@@ -89,7 +105,8 @@ sub parse {
 	push (@handlers, Unparsed => sub { $self->_handle_unparsed(@_) } )
 	    if (UNIVERSAL::can($dtd_h, 'unparsed_entity_decl'));
 	push (@handlers, Entity => sub { $self->_handle_entity(@_) } )
-	    if (UNIVERSAL::can($dtd_h, 'entity_decl'));
+	    if ($self->{UseEntRefs}
+		|| UNIVERSAL::can($dtd_h, 'entity_decl'));
 	push (@handlers, Element => sub { $self->_handle_element(@_) } )
 	    if (UNIVERSAL::can($dtd_h, 'element_decl'));
 	push (@handlers, Attlist => sub { $self->_handle_attlist(@_) } )
@@ -111,7 +128,13 @@ sub parse {
 	    if (UNIVERSAL::can($er, 'resolve_entity'));
     }
 
-    my @xml_parser_options = ( Handlers => { @handlers } );
+    my @xml_parser_options;
+    if ($self->{UseEntRefs}) {
+	@xml_parser_options = ( NoExpand => 1,
+				Handlers => { @handlers } );
+    } else {
+	@xml_parser_options = ( Handlers => { @handlers } );
+    }
 
     push (@xml_parser_options,
 	  ProtocolEncoding => $self->{ParseOptions}{Source}{Encoding})
@@ -176,6 +199,8 @@ sub _handle_init {
 sub _handle_final {
     my $self = shift;
 
+    delete $self->{UseEntRefs};
+    delete $self->{EntRefs};
     return $self->{DocumentHandler}->end_document( { } );
 }
 
@@ -184,7 +209,26 @@ sub _handle_start {
     my $expat = shift;
     my $element = shift;
 
-    $self->{DocumentHandler}->start_element( { Name => $element, Attributes => { @_ } } );
+    my @properties;
+    if ($self->{ParseOptions}{UseAttributeOrder}) {
+	# Capture order and defined() status for attributes
+	my $ii;
+
+	my $order = [];
+	for ($ii = 0; $ii < $#_; $ii += 2) {
+	    push @$order, $_[$ii];
+	}
+
+	push @properties, 'AttributeOrder', $order;
+
+	# Divide by two because XML::Parser counts both attribute name
+	# and value within it's index
+	push @properties, 'Defaulted', ($expat->specified_attr() / 2);
+    }
+
+    $self->{DocumentHandler}->start_element( { Name => $element,
+					       Attributes => { @_ },
+					       @properties } );
 }
 
 sub _handle_end {
@@ -219,6 +263,37 @@ sub _handle_comment {
     my $data = shift;
 
     $self->{DocumentHandler}->comment( { Data => $data } );
+}
+
+sub _handle_cdatastart {
+    my $self = shift;
+    my $expat = shift;
+
+    $self->{DocumentHandler}->start_cdata( { } );
+}
+
+sub _handle_cdataend {
+    my $self = shift;
+    my $expat = shift;
+
+    $self->{DocumentHandler}->end_cdata( { } );
+}
+
+# Default receives all characters that aren't handled by some other
+# handler, this means a lot of stuff goes through here.  All we're
+# looking for are `&NAME;' entity reference sequences
+sub _handle_default {
+    my $self = shift;
+    my $expat = shift;
+    my $string = shift;
+
+    if ($string =~ /^&($name_re);$/) {
+	my $ent_ref = $self->{EntRefs}{$1};
+	if (!defined $ent_ref) {
+	    $ent_ref = { Name => $1 };
+	}
+	$self->{DocumentHandler}->entity_reference($ent_ref);
+    }
 }
 
 ###
@@ -281,7 +356,13 @@ sub _handle_entity {
     push (@properties, Notation => $ndata)
 	if (defined $ndata);
 
-    $self->{DTDHandler}->entity_decl( { @properties } );
+    my $properties = { @properties };
+    if ($self->{UseEntRefs}) {
+	$self->{EntRefs}{$name} = $properties;
+    }
+    if ($self->{DTDHandler}->can('entity_decl')) {
+	$self->{DTDHandler}->entity_decl( $properties );
+    }
 }
 
 sub _handle_element {
@@ -303,11 +384,11 @@ sub _handle_attlist {
     my $default = shift;
     my $fixed = shift;
 
-    $self->{DTDHandler}->entity_decl( { EntityName => $elname,
-					AttributeName => $attname,
-				        Type => $type,
-					Default => $default,
-					Fixed => $fixed } );
+    $self->{DTDHandler}->attlist_decl( { ElementName => $elname,
+					 AttributeName => $attname,
+					 Type => $type,
+					 Default => $default,
+					 Fixed => $fixed } );
 }
 
 sub _handle_doctype {
@@ -455,6 +536,8 @@ The following options are supported by C<XML::Parser::PerlSAX>:
  EntityResolver   handler to resolve entities
  Locale           locale to provide localisation for errors
  Source           hash containing the input source for parsing
+ UseAttributeOrder set to true to provide AttributeOrder and Defaulted
+                   properties in `start_element()'
 
 If no handlers are provided then all events will be silently ignored,
 except for `C<fatal_error()>' which will cause a `C<die()>' to be
@@ -508,6 +591,22 @@ Receive notification of the beginning of an element.
 
 The `C<Attributes>' hash contains only string values.
 
+If the `C<UseAttributeOrder>' parser option is true, the following
+properties are also passed to `C<start_element>':
+
+ AttributeOrder   An array of attribute names in the order they were
+                  specified, followed by the defaulted attribute
+                  names.
+ Defaulted        The index number of the first defaulted attribute in
+                  `AttributeOrder.  If this index is equal to the
+                  length of `AttributeOrder', there were no defaulted
+                  values.
+
+Note to C<XML::Parser> users:  `C<Defaulted>' will be half the value of
+C<XML::Parser::Expat>'s `C<specified_attr()>' function because only
+attribute names are provided, not their values.
+
+
 =item end_element
 
 Receive notification of the end of an element.
@@ -532,6 +631,29 @@ Receive notification of a processing instruction.
 Receive notification of a comment.
 
  Data             The comment data, if any.
+
+=item start_cdata
+
+Receive notification of the start of a CDATA section.
+
+No properties defined.
+
+=item end_cdata
+
+Receive notification of the end of a CDATA section.
+
+No properties defined.
+
+=item entity_reference
+
+Receive notification of an internal entity reference.  If this handler
+is defined, internal entities will not be expanded and not passed to
+the `C<characters()>' handler.  If this handler is not defined,
+internal entities will be expanded if possible and passed to the
+`C<characters()>' handler.
+
+ Name             The entity reference name
+ Value            The entity reference value
 
 =back
 

@@ -3,13 +3,16 @@
 # XML::Handler::CanonXMLWriter is free software; you can redistribute
 # it and/or modify it under the same terms as Perl itself.
 #
-# $Id: CanonXMLWriter.pm,v 1.1 1999/05/27 00:59:56 kmacleod Exp $
+# $Id: CanonXMLWriter.pm,v 1.2 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 use strict;
 
 package XML::Handler::CanonXMLWriter;
-use vars qw{%char_entities};
+use vars qw{ $VERSION %char_entities };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 %char_entities = (
     "\x09" => '&#9;',

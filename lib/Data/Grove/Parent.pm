@@ -3,8 +3,18 @@
 # Data::Grove::Parent is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: Parent.pm,v 1.1 1999/05/23 17:37:06 kmacleod Exp $
+# $Id: Parent.pm,v 1.2 1999/12/22 21:15:00 kmacleod Exp $
 #
+
+###
+### WARNING
+###
+###
+### This code has a bug in it that renders it useless.  In the FETCH
+### routines, the new object created should have a reference to the
+### the tied object that has $self as the underlying value.  As of
+### this version, I don't know of a way to get to the tied object.
+###
 
 # Search for places marked `VALIDATE' to see where validation hooks
 # may be added in the future.
@@ -19,6 +29,11 @@ package Data::Grove::Parent;
 
 use UNIVERSAL;
 use Carp;
+
+use vars qw{ $VERSION };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 sub new {
     my $type = shift;

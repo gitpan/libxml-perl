@@ -2,7 +2,7 @@
 # Copyright (C) 1999 Ken MacLeod
 # See the file COPYING for distribution terms.
 #
-# $Id: ESISParser.pm,v 1.6 1999/08/14 15:57:45 kmacleod Exp $
+# $Id: ESISParser.pm,v 1.8 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 use strict;
@@ -12,9 +12,12 @@ use UNIVERSAL;
 
 package XML::ESISParser;
 
-use vars qw{$NSGMLS_sgml $NSGMLS_FLAGS_sgml $NSGMLS_ENV_sgml
-	    $NSGMLS_xml $NSGMLS_FLAGS_xml $NSGMLS_ENV_xml
-	    $XML_DECL};
+use vars qw{ $VERSION $NSGMLS_sgml $NSGMLS_FLAGS_sgml $NSGMLS_ENV_sgml
+	     $NSGMLS_xml $NSGMLS_FLAGS_xml $NSGMLS_ENV_xml
+	     $XML_DECL };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 $NSGMLS_sgml = 'nsgmls';
 $NSGMLS_FLAGS_sgml = '-oentity -oempty -onotation-sysid -oincluded -oline';
@@ -269,8 +272,12 @@ sub parse_fh {
 			}
 			$out = '';
 		    }
-		    $doc_h->record_end
-			if ($can_record_end);
+		    if ($can_record_end) {
+			$doc_h->record_end( { } );
+		    } else {
+			$doc_h->characters({ Data => "\n" })
+			    if ($can_characters);
+		    }
 		} elsif ($1 eq '\\') {
 		    $out .= '\\';
 		} else {

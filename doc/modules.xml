@@ -59,7 +59,22 @@
       <category>PerlSAX</category>
     </package>
     <package>
+      <name>XML::Handler::CanonXMLWriter</name>
+      <category>PerlSAX</category>
+      <category>XML Conversion</category>
+    </package>
+    <package>
       <name>XML::Handler::Sample</name>
+      <category>PerlSAX</category>
+      <category>XML Conversion</category>
+    </package>
+    <package>
+      <name>XML::Handler::Subs</name>
+      <category>PerlSAX</category>
+      <category>XML Conversion</category>
+    </package>
+    <package>
+      <name>XML::Handler::XMLWriter</name>
       <category>PerlSAX</category>
       <category>XML Conversion</category>
     </package>

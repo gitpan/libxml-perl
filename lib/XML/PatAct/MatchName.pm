@@ -3,12 +3,17 @@
 # XML::PatAct::MatchName is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: MatchName.pm,v 1.2 1999/08/16 16:04:03 kmacleod Exp $
+# $Id: MatchName.pm,v 1.3 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 use strict;
 
 package XML::PatAct::MatchName;
+
+use vars qw{ $VERSION };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 sub new {
     my $type = shift;

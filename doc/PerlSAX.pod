@@ -197,7 +197,7 @@ Interface for associating a SAX event with a document location.
 
 If a SAX parser provides location information to the SAX application,
 it does so by implementing the following methods and then calling the
-`C<set_document_locator()' handler method.  The handler can use the
+`C<set_document_locator()>' handler method.  The handler can use the
 object to obtain the location of any other document handler event in
 the XML source document.
 

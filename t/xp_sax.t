@@ -3,7 +3,7 @@
 # Before `make install' is performed this script should be runnable with
 # `make test'. After `make install' it should work as `perl test.pl'
 #
-# $Id: xp_sax.t,v 1.3 1999/08/10 21:42:39 kmacleod Exp $
+# $Id: xp_sax.t,v 1.4 1999/09/10 00:30:12 kmacleod Exp $
 #
 
 ######################### We start with some black magic to print on failure.
@@ -11,7 +11,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN { $| = 1; print "1..11\n"; }
+BEGIN { $| = 1; print "1..15\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use XML::Parser::PerlSAX;
 
@@ -59,6 +59,9 @@ my $xmlstring =<<"End_of_XML;";
   </bar>
   <zap ref="zing" />
   This, '\240', would be a bad character in UTF-8.
+  <![CDATA[
+    This is a CDATA marked section.
+  ]]>
 </foo>
 End_of_XML;
 
@@ -74,12 +77,13 @@ if ($parser) {
     exit;
 }
 
-# Tests 4..11
+# Tests 4..15
 eval {
     $parser->parse( Source => { String => $xmlstring,
                                 Encoding => 'ISO-8859-1' },
                     Handler => TestHandler->new( Tests => \@tests ) );
 };
+warn $@ if $@;
 
 if ($@) {
     print "Parse error:\n$@";
@@ -89,7 +93,26 @@ if ($@) {
 
 unlink('zoe.ent') if (-f 'zoe.ent');
 
-for (3 .. 11)
+$xmlstring = <<'EOF;';
+<!DOCTYPE foo [
+  <!ENTITY anEntRef "The Ent Ref">
+]>
+<foo>&anEntRef;</foo>
+EOF;
+
+eval {
+$parser->parse( Source => { String => $xmlstring },
+                Handler => NoEntRefsHandler->new( Tests => \@tests ) );
+};
+warn $@ if $@;
+
+eval {
+$parser->parse( Source => { String => $xmlstring },
+                Handler => EntRefsHandler->new( Tests => \@tests ) );
+};
+warn $@ if $@;
+
+for (3 .. 15)
 {
     print "not " unless $tests[$_];
     print "ok $_\n";
@@ -134,6 +157,16 @@ sub unparsed_entity_decl {
     $self->{Tests}[9] ++;
 }
 
+sub start_cdata {
+    my $self = shift;
+    $self->{Tests}[12] ++;
+}
+
+sub end_cdata {
+    my $self = shift;
+    $self->{Tests}[13] ++;
+}
+
 sub resolve_entity {
     my $self = shift;
     my $entity = shift;
@@ -149,3 +182,44 @@ sub resolve_entity {
     }
 }
 
+package NoEntRefsHandler;
+
+sub new {
+    my $type = shift;
+    return bless { @_ }, $type;
+}
+
+sub characters {
+    my $self = shift;
+    my $characters = shift;
+
+    if ($characters->{Data} eq 'The Ent Ref') {
+	$self->{Tests}[14] ++;
+    }
+}
+
+package EntRefsHandler;
+
+sub new {
+    my $type = shift;
+    return bless { @_ }, $type;
+}
+
+sub characters {
+    my $self = shift;
+    my $characters = shift;
+
+    if ($characters->{Data} eq 'The Ent Ref') {
+	die "shouldn't have made it here";
+    }
+}
+
+sub entity_reference {
+    my $self = shift;
+    my $ent_ref = shift;
+
+    if (($ent_ref->{Name} eq 'anEntRef')
+	&& ($ent_ref->{Value} eq 'The Ent Ref')) {
+	$self->{Tests}[15] ++;
+    }
+}

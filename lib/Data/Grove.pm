@@ -3,7 +3,7 @@
 # Data::Grove is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: Grove.pm,v 1.4 1999/05/23 17:37:06 kmacleod Exp $
+# $Id: Grove.pm,v 1.6 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 ###
@@ -14,6 +14,11 @@
 ### 
 
 package Data::Grove;
+
+use vars qw{ $VERSION };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 sub new {
     my $type = shift;
@@ -26,6 +31,11 @@ sub new {
 
     return bless $self, $type;
 }
+
+package Data::Grove::Characters;
+use vars qw{ @ISA $type_name };
+@ISA = qw{Data::Grove};
+$type_name = 'characters';
 
 1;
 

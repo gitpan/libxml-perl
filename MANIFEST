@@ -4,7 +4,7 @@ MANIFEST
 Makefile.PL
 README
 libxml-perl.spec
-libxml-perl-0.05.spec
+libxml-perl-0.06.spec
 doc/CreatingPatActModules.pod
 doc/PerlSAX.pod
 doc/UsingPatActModules.pod
@@ -34,6 +34,7 @@ examples/myhandler.xml
 examples/perlsax-test.pl
 examples/schema.pl
 examples/schema.xml
+t/amsterdam.t
 t/canon_xml_writer.t
 t/schema.t
 t/stream.t

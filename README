@@ -1,4 +1,4 @@
-$Id: README,v 1.8 1999/08/10 21:42:39 kmacleod Exp $
+$Id: README,v 1.9 1999/08/16 19:52:38 kmacleod Exp $
 
 
 			     libxml-perl
@@ -65,6 +65,23 @@ MODULES
 
         XML::ESISParser with XML::Grove obsolete the
         SGML::SPGroveBuilder and SGML::Grove modules.
+
+    XML::Handler::XMLWriter
+        A PerlSAX handler for writing readable XML (in contrast to
+        Canonical XML, for example).  XMLWriter is also subclassable
+        and supports calling start and end methods by element-names
+        (subclassed from XML::Handler::Subs).  XMLWriter is similar to
+        XML::Parser's Stream style.
+
+    XML::Handler::Subs
+        A PerlSAX handler base class that calls start and end methods
+        by element-names.  Subs is similar to XML::Parser's Subs
+        style.
+
+    XML::Handler::CanonXMLWriter
+        A PerlSAX handler that outputs in Canonical XML
+        <http://www.jclark.com/xml/canonxml.html>.  This module is
+        generally only used for debugging.
 
     Data::Grove                BETA
     Data::Grove::Parent        BETA

@@ -3,13 +3,18 @@
 # Data::Grove::Visitor is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: Visitor.pm,v 1.4 1999/05/07 00:05:35 kmacleod Exp $
+# $Id: Visitor.pm,v 1.5 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 use strict;
 use 5.005;
 
 package Data::Grove::Visitor;
+
+use vars qw{ $VERSION };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 # The following methods extend Data::Grove
 package Data::Grove;

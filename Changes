@@ -2,6 +2,28 @@ Revision history for Perl extension libxml
 
 Backwards incompatible changes are marked with a `*'.
 
+0.06  Wed Dec 22 15:14:39 CST 1999
+	- all modules: add $VERSION.  Suggested by Michael Koehne
+	  <kraehe@copyleft.de>
+	- XML::Parser::PerlSAX: add UseAttributeOrder option and
+          AttributeOrder and Defaulted properties to start_element()
+          handler.  Suggested by Enno Derksen <enno@att.com>
+	- XML::Parser::PerlSAX: add start_cdata, end_cdata, and
+	  entity_reference events
+	- XML::PatAct::Amsterdam: added Output and AsString options,
+	  added support for replacing attributes
+	- Data::Grove: add a Data::Grove::Characters class to act as a
+	  default grove object for containing characters.
+	- fixes
+	  - XML::PatAct::ToObjects: removed leftover debugging statement
+	  - XML::ESISParser: report record end as characters if no
+	    record_end() handler
+	  - XML::Parser::PerlSAX: For attribute list declarations, now
+	    correctly calls the attlist_decl() method and passes the
+	    ElementName property, it used to call entity_decl()
+	    passing EntityName.  Reported by Enno Derksen
+	    <enno@att.com> and Colin Muller <colin@durbanet.co.za>
+
 0.05  Mon Aug 16 11:02:32 CDT 1999
 	- Major update to PerlSAX.pod
           - added an introduction

@@ -4,7 +4,7 @@
 # XML::Handler::XMLWriter is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
-# $Id: XMLWriter.pm,v 1.1 1999/08/16 16:04:03 kmacleod Exp $
+# $Id: XMLWriter.pm,v 1.2 1999/12/22 21:15:00 kmacleod Exp $
 #
 
 use strict;
@@ -12,7 +12,10 @@ use strict;
 package XML::Handler::XMLWriter;
 use XML::Handler::Subs;
 
-use vars qw{ @ISA $escapes };
+use vars qw{ $VERSION @ISA $escapes };
+
+# will be substituted by make-rel script
+$VERSION = "0.00";
 
 @ISA = qw{ XML::Handler::Subs };
 
